@@ -1,27 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Watchlist.Data;
+﻿// <copyright file="FilmsController.cs" company="CrimsonKln">
+// Copyright (c) CrimsonKln. All rights reserved.
+// </copyright>
 
 namespace Watchlist.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Rendering;
+    using Microsoft.EntityFrameworkCore;
+    using Watchlist.Data;
+
     public class FilmsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext context;
 
         public FilmsController(ApplicationDbContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         // GET: Films
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Films.ToListAsync());
+            return this.View(await this.context.Films.ToListAsync());
         }
 
         // GET: Films/Details/5
@@ -29,23 +33,23 @@ namespace Watchlist.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            var film = await _context.Films
+            var film = await this.context.Films
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (film == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            return View(film);
+            return this.View(film);
         }
 
         // GET: Films/Create
         public IActionResult Create()
         {
-            return View();
+            return this.View();
         }
 
         // POST: Films/Create
@@ -55,13 +59,14 @@ namespace Watchlist.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Titre,AnneeDeSortie")] Film film)
         {
-            if (ModelState.IsValid)
+            if (this.ModelState.IsValid)
             {
-                _context.Add(film);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                this.context.Add(film);
+                await this.context.SaveChangesAsync();
+                return this.RedirectToAction(nameof(this.Index));
             }
-            return View(film);
+
+            return this.View(film);
         }
 
         // GET: Films/Edit/5
@@ -69,15 +74,16 @@ namespace Watchlist.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            var film = await _context.Films.FindAsync(id);
+            var film = await this.context.Films.FindAsync(id);
             if (film == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
-            return View(film);
+
+            return this.View(film);
         }
 
         // POST: Films/Edit/5
@@ -89,30 +95,32 @@ namespace Watchlist.Controllers
         {
             if (id != film.Id)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (this.ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(film);
-                    await _context.SaveChangesAsync();
+                    this.context.Update(film);
+                    await this.context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FilmExists(film.Id))
+                    if (!this.FilmExists(film.Id))
                     {
-                        return NotFound();
+                        return this.NotFound();
                     }
                     else
                     {
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                return this.RedirectToAction(nameof(this.Index));
             }
-            return View(film);
+
+            return this.View(film);
         }
 
         // GET: Films/Delete/5
@@ -120,37 +128,38 @@ namespace Watchlist.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            var film = await _context.Films
+            var film = await this.context.Films
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (film == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            return View(film);
+            return this.View(film);
         }
 
         // POST: Films/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var film = await _context.Films.FindAsync(id);
+            var film = await this.context.Films.FindAsync(id);
             if (film != null)
             {
-                _context.Films.Remove(film);
+                this.context.Films.Remove(film);
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            await this.context.SaveChangesAsync();
+            return this.RedirectToAction(nameof(this.Index));
         }
 
         private bool FilmExists(int id)
         {
-            return _context.Films.Any(e => e.Id == id);
+            return this.context.Films.Any(e => e.Id == id);
         }
     }
 }

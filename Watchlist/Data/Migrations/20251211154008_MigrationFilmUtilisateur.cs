@@ -1,9 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿// <copyright file="20251211154008_MigrationFilmUtilisateur.cs" company="CrimsonKln">
+// Copyright (c) CrimsonKln. All rights reserved.
+// </copyright>
 
 #nullable disable
 
 namespace Watchlist.Data.Migrations
 {
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     /// <inheritdoc />
     public partial class MigrationFilmUtilisateur : Migration
     {

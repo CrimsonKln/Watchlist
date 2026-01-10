@@ -1,13 +1,21 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using Watchlist.Models;
+// <copyright file="HomeController.cs" company="CrimsonKln">
+// Copyright (c) CrimsonKln. All rights reserved.
+// </copyright>
 
 namespace Watchlist.Controllers
 {
+    using System.Diagnostics;
+    using Microsoft.AspNetCore.Mvc;
+    using Watchlist.Models;
+
     public class HomeController : Controller
     {
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "ListeFilms");
+            }
             return View();
         }
 

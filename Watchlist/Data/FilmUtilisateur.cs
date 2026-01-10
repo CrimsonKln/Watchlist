@@ -1,12 +1,21 @@
-﻿namespace Watchlist.Data
+﻿// <copyright file="FilmUtilisateur.cs" company="CrimsonKln">
+// Copyright (c) CrimsonKln. All rights reserved.
+// </copyright>
+
+namespace Watchlist.Data
 {
     public class FilmUtilisateur
     {
         public string IdUtilisateur { get; set; }
+
         public int IdFilm { get; set; }
-        public bool Vu {  get; set; }
-        public int Note {  get; set; }
-        public virtual Utilisateur User {  get; set; }
+
+        public bool Vu { get; set; }
+
+        public int Note { get; set; }
+
+        public virtual Utilisateur User { get; set; }
+
         public virtual Film Film { get; set; }
     }
 }
