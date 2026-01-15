@@ -12,6 +12,7 @@ namespace Watchlist.Controllers
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.EntityFrameworkCore;
     using Watchlist.Data;
+    using Watchlist.Models;
 
     public class FilmsController : Controller
     {
@@ -57,7 +58,7 @@ namespace Watchlist.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Titre,AnneeDeSortie")] Film film)
+        public async Task<IActionResult> Create([Bind("Id,Titre,AnneeDeSortie,RealisateurId")] Film film)
         {
             if (this.ModelState.IsValid)
             {
@@ -77,13 +78,25 @@ namespace Watchlist.Controllers
                 return this.NotFound();
             }
 
-            var film = await this.context.Films.FindAsync(id);
+            var film = await this.context.Films
+                .Include(f => f.Realisateur)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (film == null)
             {
                 return this.NotFound();
             }
 
-            return this.View(film);
+            var vm = new FilmEditViewModel
+            {
+                Id = film.Id,
+                Titre = film.Titre,
+                AnneeDeSortie = film.AnneeDeSortie,
+                RealisateurId = film.RealisateurId,
+                RealisateurNom = film.Realisateur?.Nom,
+            };
+
+            return this.View(vm);
         }
 
         // POST: Films/Edit/5
@@ -91,12 +104,22 @@ namespace Watchlist.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Titre,AnneeDeSortie")] Film film)
+        public async Task<IActionResult> Edit(int id, Watchlist.Models.FilmEditViewModel vm)
         {
-            if (id != film.Id)
+            if (id != vm.Id)
             {
                 return this.NotFound();
             }
+
+            var film = await this.context.Films.FindAsync(id);
+            if (film == null)
+            {
+                return this.NotFound();
+            }
+
+            film.Titre = vm.Titre;
+            film.AnneeDeSortie = vm.AnneeDeSortie;
+            film.RealisateurId = vm.RealisateurId;
 
             if (this.ModelState.IsValid)
             {
@@ -155,6 +178,22 @@ namespace Watchlist.Controllers
 
             await this.context.SaveChangesAsync();
             return this.RedirectToAction(nameof(this.Index));
+        }
+
+        [HttpGet]
+        public IActionResult SearchRealisateurs(string term)
+        {
+            var realisateurs = this.context.Realisateurs
+                .Where(r => r.Nom.Contains(term))
+                .Select(r => new
+                {
+                    id = r.Id,
+                    text = r.Nom,
+                })
+                .Take(20)
+                .ToList();
+
+            return this.Json(realisateurs);
         }
 
         private bool FilmExists(int id)

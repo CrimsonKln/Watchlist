@@ -20,18 +20,18 @@ namespace Watchlist.Controllers
             this.gestionnaire = gestionnaire;
         }
 
-        private Task<Utilisateur> GetCurrentUserAsync() => this.gestionnaire.GetUserAsync(HttpContext.User);
+        private Task<Utilisateur> GetCurrentUserAsync() => this.gestionnaire.GetUserAsync(this.HttpContext.User);
 
         [HttpGet]
         public async Task<string> RecupererIdUtilisateurCourant()
         {
-            Utilisateur utilisateur = await GetCurrentUserAsync();
+            Utilisateur utilisateur = await this.GetCurrentUserAsync();
             return utilisateur?.Id;
         }
 
         public async Task<IActionResult> Index()
         {
-            var id = await RecupererIdUtilisateurCourant();
+            var id = await this.RecupererIdUtilisateurCourant();
             var filmsUtilisateur = this.context.FilmsUtilisateur.Where(x => x.IdUtilisateur == id);
             var modele = filmsUtilisateur.Select(x => new FilmViewModel
             {
@@ -40,7 +40,7 @@ namespace Watchlist.Controllers
                 AnneeDeSortie = x.Film.AnneeDeSortie,
                 Vu = x.Vu,
                 PresentDansListe = true,
-                Note = x.Note
+                Note = x.Note,
             }).ToList();
             return this.View(modele);
         }

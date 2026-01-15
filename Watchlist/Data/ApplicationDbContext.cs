@@ -20,8 +20,11 @@ namespace Watchlist.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<FilmUtilisateur>()
             .HasKey(t => new { t.IdUtilisateur, t.IdFilm });
+            modelBuilder.Entity<FilmViewModel>().ToTable("FilmViewModel", t => t.ExcludeFromMigrations());
         }
 
-public DbSet<Watchlist.Models.FilmViewModel> FilmViewModel { get; set; } = default!;
+        public DbSet<FilmViewModel> FilmViewModel { get; set; }
+
+        public DbSet<Realisateur> Realisateurs { get; set; }
     }
 }

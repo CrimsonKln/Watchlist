@@ -11,5 +11,9 @@ namespace Watchlist.Data
         public string Titre { get; set; }
 
         public int AnneeDeSortie { get; set; }
+
+        public int? RealisateurId { get; set; }
+
+        public Realisateur? Realisateur { get; set; }
     }
 }
