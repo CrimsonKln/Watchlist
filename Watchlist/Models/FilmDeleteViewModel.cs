@@ -1,4 +1,4 @@
-// <copyright file="FilmEditViewModel.cs" company="CrimsonKln">
+﻿// <copyright file="FilmDeleteViewModel.cs" company="CrimsonKln">
 // Copyright (c) CrimsonKln. All rights reserved.
 // </copyright>
 
@@ -7,9 +7,9 @@ namespace Watchlist.Models
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
-    /// View model for editing a film.
+    /// View model for deleting a film.
     /// </summary>
-    public class FilmEditViewModel
+    public class FilmDeleteViewModel
     {
         /// <summary>
         /// Gets or sets the film identifier.
@@ -29,14 +29,9 @@ namespace Watchlist.Models
         public int AnneeDeSortie { get; set; }
 
         /// <summary>
-        /// Gets or sets the director's identifier.
-        /// </summary>
-        [Display(Name = "Director")]
-        public int? RealisateurId { get; set; }
-
-        /// <summary>
         /// Gets or sets the director's name.
         /// </summary>
+        [Display(Name = "Director")]
         public string? RealisateurNom { get; set; }
     }
 }

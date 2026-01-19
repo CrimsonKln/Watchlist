@@ -38,13 +38,26 @@ namespace Watchlist.Controllers
             }
 
             var film = await this.context.Films
+                .Include(f => f.Realisateur)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (film == null)
             {
                 return this.NotFound();
             }
 
-            return this.View(film);
+            var vm = new FilmDetailsViewModel
+            {
+                Id = film.Id,
+                Titre = film.Titre,
+                AnneeDeSortie = film.AnneeDeSortie,
+            };
+
+            if (film.RealisateurId is not null)
+            {
+                vm.RealisateurNom = film.Realisateur?.Nom;
+            }
+
+            return this.View(vm);
         }
 
         // GET: Films/Create
@@ -155,13 +168,26 @@ namespace Watchlist.Controllers
             }
 
             var film = await this.context.Films
+                .Include(f => f.Realisateur)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (film == null)
             {
                 return this.NotFound();
             }
 
-            return this.View(film);
+            var vm = new FilmDeleteViewModel
+            {
+                Id = film.Id,
+                Titre = film.Titre,
+                AnneeDeSortie = film.AnneeDeSortie,
+            };
+
+            if (film.RealisateurId is not null)
+            {
+                vm.RealisateurNom = film.Realisateur?.Nom;
+            }
+
+            return this.View(vm);
         }
 
         // POST: Films/Delete/5

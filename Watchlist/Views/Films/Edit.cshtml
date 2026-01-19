@@ -1,12 +1,11 @@
 ﻿@model Watchlist.Models.FilmEditViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = $"{Model.Titre} - Edit";
 }
 
-<h1>Edit</h1>
+<h1>@Model.Titre</h1>
 
-<h4>Film</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
