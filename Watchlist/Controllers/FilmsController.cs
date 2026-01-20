@@ -8,25 +8,64 @@ namespace Watchlist.Controllers
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.EntityFrameworkCore;
     using Watchlist.Data;
     using Watchlist.Models;
 
+    [Authorize]
     public class FilmsController : Controller
     {
         private readonly ApplicationDbContext context;
+        private readonly UserManager<Utilisateur> gestionnaire;
 
-        public FilmsController(ApplicationDbContext context)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FilmsController"/> class.
+        /// </summary>
+        /// <param name="context">Database context.</param>
+        /// <param name="gestionnaire">User manager.</param>
+        public FilmsController(ApplicationDbContext context, UserManager<Utilisateur> gestionnaire)
         {
             this.context = context;
+            this.gestionnaire = gestionnaire;
+        }
+
+        private Task<Utilisateur> GetCurrentUserAsync() => this.gestionnaire.GetUserAsync(this.HttpContext.User);
+
+        [HttpGet]
+        public async Task<string?> RecupererIdUtilisateurCourant()
+        {
+            Utilisateur utilisateur = await this.GetCurrentUserAsync();
+            return utilisateur?.Id;
         }
 
         // GET: Films
         public async Task<IActionResult> Index()
         {
-            return this.View(await this.context.Films.ToListAsync());
+            var idUtilisateur = await this.RecupererIdUtilisateurCourant();
+            var vm = await this.context.Films.Select(x => new FilmViewModel
+            {
+                IdFilm = x.Id,
+                Titre = x.Titre,
+                AnneeDeSortie = x.AnneeDeSortie,
+            }).ToListAsync();
+
+            foreach (var item in vm)
+            {
+                var m = await this.context.FilmsUtilisateur.FirstOrDefaultAsync(x =>
+                           x.UtilisateurId == idUtilisateur && x.FilmId == item.IdFilm);
+                if (m != null)
+                {
+                    item.PresentDansListe = true;
+                    item.Note = m.Note;
+                    item.Vu = m.Vu;
+                }
+            }
+
+            return this.View(vm);
         }
 
         // GET: Films/Details/5
@@ -220,6 +259,36 @@ namespace Watchlist.Controllers
                 .ToList();
 
             return this.Json(realisateurs);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AjouterSupprimer(int idFilm, int val)
+        {
+            int answer = -1;
+            var idUtilisateur = await this.RecupererIdUtilisateurCourant();
+            if (val == 0)
+            {
+                this.context.FilmsUtilisateur.Add(new FilmUtilisateur
+                {
+                    FilmId = idFilm,
+                    UtilisateurId = idUtilisateur,
+                    Vu = false,
+                    Note = 0,
+                });
+                answer = 1;
+            }
+            else
+            {
+                var filmUtilisateur = await this.context.FilmsUtilisateur.FindAsync(idUtilisateur, idFilm);
+                if (filmUtilisateur != null)
+                {
+                    this.context.FilmsUtilisateur.Remove(filmUtilisateur);
+                    answer = 0;
+                }
+            }
+
+            await this.context.SaveChangesAsync();
+            return this.Json(answer);
         }
 
         private bool FilmExists(int id)

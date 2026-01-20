@@ -20,5 +20,12 @@ namespace Watchlist.Data
         public int? RealisateurId { get; set; }
 
         public Realisateur? Realisateur { get; set; }
+
+        public virtual ICollection<Utilisateur> Utilisateurs { get; set; }
+
+        public Film()
+        {
+            this.Utilisateurs = new HashSet<Utilisateur>();
+        }
     }
 }

@@ -18,8 +18,24 @@ namespace Watchlist.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<FilmUtilisateur>()
-            .HasKey(t => new { t.IdUtilisateur, t.IdFilm });
+
+            modelBuilder.Entity<Utilisateur>()
+                .HasMany(e => e.ListeFilms)
+                .WithMany(e => e.Utilisateurs)
+                .UsingEntity<FilmUtilisateur>(
+                    j => j
+                        .HasOne(pt => pt.Film)
+                        .WithMany()
+                        .HasForeignKey(pt => pt.FilmId),
+                    j => j
+                        .HasOne(pt => pt.Utilisateur)
+                        .WithMany()
+                        .HasForeignKey(pt => pt.UtilisateurId),
+                    j =>
+                    {
+                        j.HasKey(t => new { t.UtilisateurId, t.FilmId });
+                    });
+
             modelBuilder.Entity<FilmViewModel>().ToTable("FilmViewModel", t => t.ExcludeFromMigrations());
         }
 

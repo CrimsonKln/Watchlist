@@ -4,8 +4,8 @@
 
 namespace Watchlist.Controllers
 {
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
     using Watchlist.Data;
     using Watchlist.Models;
 
@@ -32,10 +32,10 @@ namespace Watchlist.Controllers
         public async Task<IActionResult> Index()
         {
             var id = await this.RecupererIdUtilisateurCourant();
-            var filmsUtilisateur = this.context.FilmsUtilisateur.Where(x => x.IdUtilisateur == id);
+            var filmsUtilisateur = this.context.FilmsUtilisateur.Where(x => x.UtilisateurId == id);
             var modele = filmsUtilisateur.Select(x => new FilmViewModel
             {
-                IdFilm = x.IdFilm,
+                IdFilm = x.FilmId,
                 Titre = x.Film.Titre,
                 AnneeDeSortie = x.Film.AnneeDeSortie,
                 Vu = x.Vu,
