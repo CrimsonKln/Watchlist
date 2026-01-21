@@ -8,6 +8,14 @@ namespace Watchlist.Data
 
     public class Film
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Film"/> class.
+        /// </summary>
+        public Film()
+        {
+            this.Utilisateurs = new HashSet<Utilisateur>();
+        }
+
         public int Id { get; set; }
 
         [Display(Name = "Title")]
@@ -22,10 +30,5 @@ namespace Watchlist.Data
         public Realisateur? Realisateur { get; set; }
 
         public virtual ICollection<Utilisateur> Utilisateurs { get; set; }
-
-        public Film()
-        {
-            this.Utilisateurs = new HashSet<Utilisateur>();
-        }
     }
 }

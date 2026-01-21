@@ -16,7 +16,6 @@ namespace Watchlist.Controllers
     using Watchlist.Data;
     using Watchlist.Models;
 
-    [Authorize]
     public class FilmsController : Controller
     {
         private readonly ApplicationDbContext context;
@@ -33,8 +32,7 @@ namespace Watchlist.Controllers
             this.gestionnaire = gestionnaire;
         }
 
-        private Task<Utilisateur> GetCurrentUserAsync() => this.gestionnaire.GetUserAsync(this.HttpContext.User);
-
+        [Authorize]
         [HttpGet]
         public async Task<string?> RecupererIdUtilisateurCourant()
         {
@@ -100,6 +98,7 @@ namespace Watchlist.Controllers
         }
 
         // GET: Films/Create
+        [Authorize]
         public IActionResult Create()
         {
             return this.View();
@@ -108,6 +107,7 @@ namespace Watchlist.Controllers
         // POST: Films/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Titre,AnneeDeSortie,RealisateurId")] Film film)
@@ -123,6 +123,7 @@ namespace Watchlist.Controllers
         }
 
         // GET: Films/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -154,6 +155,7 @@ namespace Watchlist.Controllers
         // POST: Films/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Watchlist.Models.FilmEditViewModel vm)
@@ -199,6 +201,7 @@ namespace Watchlist.Controllers
         }
 
         // GET: Films/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -230,6 +233,7 @@ namespace Watchlist.Controllers
         }
 
         // POST: Films/Delete/5
+        [Authorize]
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -245,6 +249,7 @@ namespace Watchlist.Controllers
             return this.RedirectToAction(nameof(this.Index));
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult SearchRealisateurs(string term)
         {
@@ -261,6 +266,7 @@ namespace Watchlist.Controllers
             return this.Json(realisateurs);
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> AjouterSupprimer(int idFilm, int val)
         {
@@ -290,6 +296,8 @@ namespace Watchlist.Controllers
             await this.context.SaveChangesAsync();
             return this.Json(answer);
         }
+
+        private Task<Utilisateur> GetCurrentUserAsync() => this.gestionnaire.GetUserAsync(this.HttpContext.User);
 
         private bool FilmExists(int id)
         {

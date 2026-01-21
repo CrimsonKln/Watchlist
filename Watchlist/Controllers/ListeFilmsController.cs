@@ -4,11 +4,13 @@
 
 namespace Watchlist.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Watchlist.Data;
     using Watchlist.Models;
 
+    [Authorize]
     public class ListeFilmsController : Controller
     {
         private readonly ApplicationDbContext context;
